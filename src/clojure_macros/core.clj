@@ -22,3 +22,9 @@
   ([arg & args]
    `(if ~arg 
       (do ~@args))))
+
+(defmacro my-when-not
+  ([arg & args]
+   `(if ~arg
+      nil
+      (do ~@args))))

@@ -128,3 +128,35 @@
   (it "should not evaluate forms after first if it returns false"
     (should-not-throw (my-when (> 1 3) (throw (Exception. "")))))
 )
+
+(describe "when-not"
+  (it "should return nil for '(nil)"
+    (should= nil (my-when-not nil)))
+
+  (it "should return nil for '(true)"
+    (should= nil (my-when-not true)))
+
+  (it "should return nil for '(false)"
+    (should= nil (my-when-not false)))
+  
+  (it "should evaluate a form that is passed in (once) and return nil"
+    (let [a (atom 0)]
+      (should= nil (my-when-not (swap! a inc)))
+      (should= 1 @a)))
+
+  (it "should return nil for '(true true)"
+    (should= nil (my-when-not true true)))
+
+  (it "should return true for '(false true)"
+    (should= true (my-when-not false true)))
+
+  (it "should evaluate all forms that are passed in, return last"
+    (let [a (atom 0)
+          b (atom 0)]
+      (should= 2 (my-when-not (= 0 (swap! a inc)) (swap! b inc) (swap! a inc)))
+      (should= 2 @a)
+      (should= 1 @b)))
+
+  (it "should not evaluate forms after first if it returns true"
+    (should-not-throw (my-when-not (> 3 1) (throw (Exception. "")))))
+)
