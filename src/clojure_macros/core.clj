@@ -4,6 +4,7 @@
   ([] true)
   ([arg] arg)
   ([arg & args]
-    `(if ~arg
-       (my-and ~@args)
-       ~arg)))
+    `(let [result# ~arg]
+       (if result#
+         (my-and ~@args)
+         result#))))
