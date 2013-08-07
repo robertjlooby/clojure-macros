@@ -7,12 +7,12 @@ Some macros implemented in clojure
 defmacro
 
 ### Special forms
-if
-loop
+if,
+loop,
 recur
 
 ### Functions
-empty?
-first
-not
+empty?,
+first,
+not,
 rest
