@@ -56,4 +56,7 @@
 
   (it "should not call functions passed as args"
     (should= true (my-and (constantly false) (> 2 1))))
+
+  (it "should not evaluate forms past the first false one"
+    (should-not-throw (my-and (> 1 3) (throw (Exception. "")))))
 )
