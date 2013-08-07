@@ -61,7 +61,7 @@
     (should-not-throw (my-and (> 1 3) (throw (Exception. "")))))
 
   (it "should only evaluate forms once"
-    (let [v (transient [])]
-      (my-and (= 5 (count (conj! v 1))) true)
-      (should= 1 (count v))))
+    (let [a (atom 0)]
+      (my-and (= 0 (swap! a inc)) true)
+      (should= 1 @a)))
 )
