@@ -99,3 +99,32 @@
       (my-or (= 1 (swap! a inc)) true)
       (should= 1 @a)))
 )
+
+(describe "when"
+  (it "should return nil for '(nil)"
+    (should= nil (my-when nil)))
+
+  (it "should return nil for '(true)"
+    (should= nil (my-when true)))
+  
+  (it "should evaluate a form that is passed in (once) and return nil"
+    (let [a (atom 0)]
+      (should= nil (my-when (swap! a inc)))
+      (should= 1 @a)))
+
+  (it "should return true for '(true true)"
+    (should= true (my-when true true)))
+
+  (it "should return false for '(true false)"
+    (should= false (my-when true false)))
+
+  (it "should evaluate all forms that are passed in, return last"
+    (let [a (atom 0)
+          b (atom 0)]
+      (should= 2 (my-when (swap! a inc) (swap! b inc) (swap! a inc)))
+      (should= 2 @a)
+      (should= 1 @b)))
+
+  (it "should not evaluate forms after first if it returns false"
+    (should-not-throw (my-when (> 1 3) (throw (Exception. "")))))
+)

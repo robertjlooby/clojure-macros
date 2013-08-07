@@ -17,3 +17,8 @@
        (if result#
          result#
          (my-or ~@args)))))
+
+(defmacro my-when
+  ([arg & args]
+   `(if ~arg 
+      (do ~@args))))
