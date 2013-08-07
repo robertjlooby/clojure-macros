@@ -4,25 +4,25 @@
 
 (describe "and"
   (it "should be true for no args"
-    (should (my-and)))
+    (should= true (my-and)))
 
   (it "should be true for one true arg"
-    (should (my-and true)))
+    (should= true (my-and true)))
 
   (it "should be false for one false arg"
-    (should-not (my-and false)))
+    (should= false (my-and false)))
 
   (it "should be false for '(false true)"
-    (should-not (my-and false true)))
+    (should= false (my-and false true)))
 
   (it "should be false for '(true false)"
-    (should-not (my-and true false)))
+    (should= false (my-and true false)))
 
   (it "should be true for all trues"
-    (should (my-and true true true true)))
+    (should= true (my-and true true true true)))
 
   (it "should be false if one false"
-    (should-not (my-and true true true false)))
+    (should= false (my-and true true true false)))
   
   (it "should be nil for nil"
     (should= nil (my-and nil)))
@@ -42,6 +42,18 @@
   (it "should be [] for '([] [])"
     (should= [] (my-and [] [])))
 
+  (it "should evaluate a single true form"
+    (should= true (my-and (> 3 1))))
+
+  (it "should evaluate a single false form"
+    (should= false (my-and (> 1 3))))
+
+  (it "should evaluate false then true forms"
+    (should= false (my-and (> 1 3) (> 3 1))))
+
+  (it "should evaluate true then false forms"
+    (should= false (my-and (> 3 1) (> 1 3))))
+
   (it "should not call functions passed as args"
-    (should (my-and (constantly false) (> 2 1))))
+    (should= true (my-and (constantly false) (> 2 1))))
 )

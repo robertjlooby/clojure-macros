@@ -7,6 +7,8 @@
             tail# (rest  '~args)]
        (if (not head#)
          head#
-         (if (empty? tail#)
-           head#
-           (recur (first tail#) (rest tail#)))))))
+         (if (not (eval head#))
+           (eval head#)
+           (if (empty? tail#)
+             (eval head#)
+             (recur (first tail#) (rest tail#))))))))

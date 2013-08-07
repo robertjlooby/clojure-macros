@@ -13,6 +13,7 @@ recur
 
 ### Functions
 empty?,
+eval,
 first,
 not,
 rest
