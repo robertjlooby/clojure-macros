@@ -8,3 +8,12 @@
        (if result#
          (my-and ~@args)
          result#))))
+
+(defmacro my-or
+  ([] nil)
+  ([arg] arg)
+  ([arg & args]
+    `(let [result# ~arg]
+       (if result#
+         result#
+         (my-or ~@args)))))

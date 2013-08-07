@@ -65,3 +65,37 @@
       (my-and (= 0 (swap! a inc)) true)
       (should= 1 @a)))
 )
+
+(describe "or"
+  (it "should return nil for no args"
+    (should= nil (my-or)))
+
+  (it "should return true for '(true)"
+    (should= true (my-or true)))
+
+  (it "should return 1 for '(1)"
+    (should= 1 (my-or 1)))
+
+  (it "should return nil for '(nil)"
+    (should= nil (my-or nil)))
+
+  (it "should return true for '(true false)"
+    (should= true (my-or true false)))
+
+  (it "should return false for '(nil nil false)"
+    (should= false (my-or nil nil false)))
+
+  (it "should evaluate a single true form"
+    (should= true (my-or (> 3 1))))
+
+  (it "should not call functions passed as args"
+    (should= true (fn? (my-or (constantly false) (> 2 1)))))
+
+  (it "should not evaluate forms past the first true one"
+    (should-not-throw (my-or (> 3 1) (throw (Exception. "")))))
+
+  (it "should only evaluate forms once"
+    (let [a (atom 0)]
+      (my-or (= 1 (swap! a inc)) true)
+      (should= 1 @a)))
+)
