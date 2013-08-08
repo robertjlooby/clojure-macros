@@ -34,3 +34,8 @@
          (let [~(first bindings) test#]
            ~@body)))
     `(throw (IllegalArgumentException.))))
+
+(defmacro my-while [arg & args]
+  `(loop []
+    (if ~arg 
+      (do ~@args (recur)))))

@@ -204,3 +204,33 @@
       (should= 1 @a)
       (should= 6 @b)))
 )
+
+(describe "while"
+  (it "should return nil for '(false)"
+    (should= nil (my-while false)))
+
+  (it "should return nil for '(> 1 3)"
+    (should= nil (my-while (> 1 3))))
+
+  (it "should evaluate the test"
+    (let [a (atom 0)]
+      (should= nil (my-while (do (swap! a inc) nil)))
+      (should= 1 @a)))
+
+  (it "should not evaluate the body if test is false"
+    (let [a (atom 0)]
+      (should= nil (my-while false (swap! a inc)))
+      (should= 0 @a)))
+
+  (it "should evaluate the body if the test is true, until it is false"
+    (let [a (atom 0)]
+      (should= nil (my-while (< @a 5) (swap! a inc)))
+      (should= 5 @a)))
+
+  (it "should evaluate all the body expressions"
+    (let [a (atom 0)
+          b (atom 5)]
+      (should= nil (my-while (< @a 3) (swap! a inc) (swap! b inc)))
+      (should= 3 @a)
+      (should= 8 @b)))
+)
