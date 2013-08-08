@@ -281,3 +281,43 @@
                                     (vector 3)
                                     (vector 2))))
 )
+
+(describe "cond"
+  (it "should return nil for no args"
+    (should= nil (my-cond)))
+
+  (it "should return :a for '(true :a)"
+    (should= :a (my-cond true :a)))
+
+  (it "should return nil for '(false :a)"
+    (should= nil (my-cond false :a)))
+
+  (it "should return :b for '(false :a true :b)"
+    (should= :b (my-cond false :a true :b)))
+
+  (it "should only evaluate the tests once, and only until one returns truthy"
+    (let [a (atom 0)]
+      (should= :a (my-cond (swap! a inc) :a (swap! a inc) :b))
+      (should= 1 @a)))
+
+  (it "should not evaluate the return values unless the test is truthy"
+    (let [a (atom 0)]
+      (should= :c (my-cond nil (swap! a inc) nil (swap! a inc) 1 :c))
+      (should= 0 @a)))
+
+  (it "should evaluate the :else condition if no tests are truthy"
+    (let [a (atom 0)]
+      (should= 1 (my-cond nil :a nil :b :else (swap! a inc)))
+      (should= 1 @a)))
+
+  (it "should throw an Illegal argument exception if there are an odd number of forms"
+    (should-throw IllegalArgumentException (my-cond :a))
+    (should-throw IllegalArgumentException (my-cond :a :b :c))
+    (should-throw IllegalArgumentException (my-cond :a :b :c :d :e)))
+
+  (it "should not evaluate any forms if there are an odd number of forms"
+    (let [a (atom 0)]
+      (should-throw IllegalArgumentException
+                    (my-cond (swap! a inc) :a :b))
+      (should= 0 @a)))
+)

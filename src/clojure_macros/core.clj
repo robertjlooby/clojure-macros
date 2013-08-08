@@ -53,3 +53,12 @@
      (concat (if (list? lst) lst (list lst)) [arg]))
   ([arg lst-first & lst-rest]
    `(my->> (my->> ~arg ~lst-first) ~@lst-rest)))
+
+(defmacro my-cond
+  ([] nil)
+  ([arg] `(throw (IllegalArgumentException.)))
+  ([tst arg] (if tst arg))
+  ([tst arg & args] 
+   (if (even? (count args))
+     `(if ~tst ~arg (my-cond ~@args))
+     `(throw (IllegalArgumentException.)))))
