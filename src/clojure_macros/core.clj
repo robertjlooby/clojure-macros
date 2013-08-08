@@ -39,3 +39,11 @@
   `(loop []
     (if ~arg 
       (do ~@args (recur)))))
+
+(defmacro my->
+  ([arg] arg)
+  ([arg lst]
+   (let [llst (if (list? lst) lst (list lst))]
+     (list* (first llst) arg (rest llst))))
+  ([arg lst-first & lst-rest]
+   `(my-> (my-> ~arg ~lst-first) ~@lst-rest)))

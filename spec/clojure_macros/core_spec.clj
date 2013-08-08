@@ -234,3 +234,31 @@
       (should= 3 @a)
       (should= 8 @b)))
 )
+
+(describe "->"
+  (it "should return nil for nil"
+    (should= nil (my-> nil)))
+
+  (it "should return 1 for 1"
+    (should= 1 (my-> 1)))
+
+  (it "should return true for false not"
+    (should= true (my-> false not)))
+   
+  (it "should return false for (< 3 1)"
+    (should= false (my-> (< 3 1))))
+
+  (it "should return false for 3 (< 1)"
+    (should= false (my-> 3 (< 1))))
+
+  (it "should return [5 4] for 5 (vector (+ 2 2))"
+    (should= [5 4] (my-> 5 (vector (+ 2 2)))))
+
+  (it "should return [[[5 4] 3] 2] for series of vector args"
+    (should= [[[5 4] 3] 2] (my-> 5 (vector 4)
+                                   (vector 3)
+                                   (vector 2))))
+
+  (it "should return true for false not not (= false)"
+    (should= true (my-> false not not (= false))))
+)
