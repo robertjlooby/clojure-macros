@@ -47,3 +47,9 @@
      (list* (first llst) arg (rest llst))))
   ([arg lst-first & lst-rest]
    `(my-> (my-> ~arg ~lst-first) ~@lst-rest)))
+
+(defmacro my->>
+  ([arg lst]
+     (concat (if (list? lst) lst (list lst)) [arg]))
+  ([arg lst-first & lst-rest]
+   `(my->> (my->> ~arg ~lst-first) ~@lst-rest)))

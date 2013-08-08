@@ -262,3 +262,22 @@
   (it "should return true for false not not (= false)"
     (should= true (my-> false not not (= false))))
 )
+
+(describe "->>"
+  (it "should return 7 for 5 (+ 2)"
+    (should= 7 (my->> 5 (+ 2))))
+
+  (it "should return true for 3 (< 1)"
+    (should= true (my->> 3 (< 1))))
+
+  (it "should return true for false not"
+    (should= true (my->> false not)))
+
+  (it "should return true for false not not (= false)"
+    (should= true (my->> false not not (= false))))
+
+  (it "should return [2 [3 [4 5]]] for series of vector args"
+    (should= [2 [3 [4 5]]] (my->> 5 (vector 4)
+                                    (vector 3)
+                                    (vector 2))))
+)
