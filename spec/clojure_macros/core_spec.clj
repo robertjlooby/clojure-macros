@@ -160,3 +160,47 @@
   (it "should not evaluate forms after first if it returns true"
     (should-not-throw (my-when-not (> 3 1) (throw (Exception. "")))))
 )
+
+(describe "when-let"
+  (it "should return nil for [a 1]"
+    (should= nil (my-when-let [a 1])))
+
+  (it "should return nil for [[][]]"
+    (should= nil (my-when-let [[][]])))
+
+  (it "should throw IllegalArgumentException if num of vecs in binding is != 2"
+    (should-throw IllegalArgumentException (my-when-let [a]))
+    (should-not-throw (my-when-let [a 1]))
+    (should-not-throw (my-when-let [[a b] [1 2]]))
+    (should-throw IllegalArgumentException (my-when-let [a 1 b 2])))
+
+  (it "should throw IllegalArgumentException if binding is not a vector"
+    (should-not-throw (my-when-let [[][]]))
+    (should-throw IllegalArgumentException (my-when-let '(a 1))))
+
+  (it "should evaluate 'test' once and not body if test is false, return nil"
+    (let [a (atom 0)
+          b (atom 0)]
+      (should= nil (my-when-let [x (do (swap! a inc) nil)] 
+                      (swap! b inc)))
+      (should= 1 @a)
+      (should= 0 @b)))
+
+  (it "should evaluate 'test' once and body if test is true, return output of body"
+    (let [a (atom 0)
+          b (atom 5)]
+      (should= 6 (my-when-let [x (swap! a inc)] 
+                      (swap! b inc)))
+      (should= 1 @a)
+      (should= 6 @b)))
+
+  (it "should bind the results of 'test' and use in body"
+    (should= 5 (my-when-let [x 5] x)))
+
+  (it "should evaluate all the statements in body"
+    (let [a (atom 0)
+          b (atom 5)]
+      (should= 6 (my-when-let [x true] (swap! a inc) (swap! b inc)))
+      (should= 1 @a)
+      (should= 6 @b)))
+)
