@@ -73,3 +73,13 @@
           (my-condp ~pred ~expr ~@(drop 2 clauses))))
      `(if (~pred ~test-expr ~expr) ~(first clauses)
         (my-condp ~pred ~expr ~@(rest clauses))))))
+
+(defmacro my-cond->
+  ([expr] expr)
+  ([expr test-expr] (throw (AssertionError.)))
+  ([expr test-expr form]
+   `(if ~test-expr (-> ~expr ~form) ~expr))
+  ([expr test-expr form & forms]
+   (if (odd? (count forms)) (throw (AssertionError.))
+     `(if ~test-expr (my-cond-> (-> ~expr ~form) ~@forms)
+        (my-cond-> ~expr ~@forms)))))

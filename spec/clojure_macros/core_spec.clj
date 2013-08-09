@@ -372,3 +372,59 @@
   (it "should allow a mix of normal pairs and :>> groups, resulting in a group"
     (should= false (my-condp = true false :>> inc true :>> not true :c)))
 )
+
+(describe "cond->"
+  (it "should return nil for nil"
+    (should= nil (my-cond-> nil)))
+
+  (it "should return 1 for 1"
+    (should= 1 (my-cond-> 1)))
+
+  (it "should return true for '(< 1 3)"
+    (should= true (my-cond-> (< 1 3))))
+
+  (it "should return 5 for '(5 false inc)"
+    (should= 5 (my-cond-> 5 false inc)))
+
+  (it "should return 6 for '(5 true inc)"
+    (should= 6 (my-cond-> 5 true inc)))
+
+  (it "should return 6 for '(5 true inc false inc)"
+    (should= 6 (my-cond-> 5 true inc false inc)))
+
+  (it "should return 7 for '(5 true inc true inc)"
+    (should= 7 (my-cond-> 5 true inc true inc)))
+
+  (it "should evaluate all test-exprs"
+    (let [a (atom 0)]
+      (should= 8 (my-cond-> 5 (swap! a inc) inc
+                              (swap! a inc) inc
+                              (swap! a inc) inc))
+      (should= 3 @a)))
+
+  (it "should evaluate expr for each truthy test-expr and pass the result as the expr for the next evaluation"
+    (let [a (atom 0)]
+      (should= 3 (my-cond-> (swap! a inc) true inc
+                                       true inc
+                                       false inc))
+      (should= 1 @a)))
+
+  (it "should not evaluate any exprs if there are an odd number of forms, should throw AssertionError"
+    (let [a (atom 0)]
+      (should= :a (try 
+                     (macroexpand '(my-cond-> (swap! a inc) 
+                                            true inc 
+                                            false))
+                     (catch AssertionError e :a)
+                     ))
+      (should= 0 @a)))
+
+  (it "should not evaluate any exprs if there are no forms, should throw AssertionError"
+    (let [a (atom 0)]
+      (should= :a (try 
+                     (macroexpand '(my-cond-> (swap! a inc) 
+                                              true))
+                     (catch AssertionError e :a)
+                     ))
+      (should= 0 @a)))
+)
