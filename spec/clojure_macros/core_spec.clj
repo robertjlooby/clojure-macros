@@ -321,3 +321,54 @@
                     (my-cond (swap! a inc) :a :b))
       (should= 0 @a)))
 )
+
+(describe "condp"
+  (it "should return :a for '(= true true :a)"
+    (should= :a (my-condp = true true :a)))
+
+  (it "should evaluate (pred test-expr expr) once"
+    (let [a (atom 0)]
+      (should= :b (my-condp swap! inc a :b))
+      (should= 1 @a)))
+
+  (it "should return :b for '(= true false :a true :b)"
+    (should= :b (my-condp = true false :a true :b)))
+
+  (it "should throw IllegalArgumentException if no matching clauses"
+    (should-throw IllegalArgumentException 
+                  (my-condp = true false :a false :b false :c)))
+
+  (it "should return the default clause if present and no matching clauses"
+    (should= :c (my-condp = true false :a false :b :c)))
+
+  (it "should call result fn on (pred test-expr expr) when :>> and truthy"
+    (should= 5 (my-condp + 3 1 :>> inc)))
+
+  (it "should only call (pred test-expr expr) once when :>> and truthy"
+    (let [a (atom 0)]
+      (should= 2 (my-condp swap! inc a :>> inc))
+      (should= 1 @a)))
+
+  (it "should call (pred test-expr expr) for each :>> group until one is truthy"
+    (let [a (atom 0)
+          b (atom 0)
+          c (atom 1)]
+      (should= false (my-condp = 2 (swap! a inc) :>> inc 
+                                (swap! b inc) :>> inc 
+                                (swap! c inc) :>> not))
+      (should= 1 @a)
+      (should= 1 @b)
+      (should= 2 @c)))
+
+  (it "should call default when no :>> groups are truthy"
+    (should= :c (my-condp = 3 1 :>> not 2 :>> not :c)))
+
+  (it "should allow :>> as the last result expr of a normal pair"
+    (should= :>> (my-condp = true false :a false :b true :>>)))
+
+  (it "should allow a mix of normal pairs and :>> groups, resulting in a normal pair"
+    (should= :c (my-condp = true false :>> not true :c true :>> not)))
+
+  (it "should allow a mix of normal pairs and :>> groups, resulting in a group"
+    (should= false (my-condp = true false :>> inc true :>> not true :c)))
+)

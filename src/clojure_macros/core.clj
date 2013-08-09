@@ -62,3 +62,14 @@
    (if (even? (count args))
      `(if ~tst ~arg (my-cond ~@args))
      `(throw (IllegalArgumentException.)))))
+
+(defmacro my-condp 
+  ([pred expr] `(throw (IllegalArgumentException.)))
+  ([pred expr default] default)
+  ([pred expr test-expr & clauses]
+   (if (and (= (first clauses) :>>) (> (count clauses) 1))
+     `(let [result# (~pred ~test-expr ~expr)]
+        (if result# (~(second clauses) result#)
+          (my-condp ~pred ~expr ~@(drop 2 clauses))))
+     `(if (~pred ~test-expr ~expr) ~(first clauses)
+        (my-condp ~pred ~expr ~@(rest clauses))))))
