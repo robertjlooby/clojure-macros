@@ -87,22 +87,21 @@
 (defmacro my-for [bindings & body]
   (if-not (and (vector? bindings) (even? (count bindings)))
     (throw (IllegalArgumentException.))
-    (if (empty? (second bindings)) '()
-      (if (= 2 (count bindings))
-        `(loop [values# ~(second bindings)
-                ~(first bindings) (first ~(second bindings))
-                result# '()]
-          (if (empty? values#)
-            (reverse result#)
-            (recur (rest values#)
-                   (second values#)
-                   (cons ~@body result#))))
-        `(loop [values# ~(second bindings)
-                ~(first bindings) (first ~(second bindings))
-                result# '()]
-          (if (empty? values#)
-            result#
-            (recur (rest values#)
-                   (second values#)
-                   (concat result# 
-                           (my-for ~(subvec bindings 2) ~@body)))))))))
+    (if (= 2 (count bindings))
+      `(loop [values# ~(second bindings)
+              ~(first bindings) (first ~(second bindings))
+              result# '()]
+        (if (empty? values#)
+          (reverse result#)
+          (recur (rest values#)
+                 (second values#)
+                 (cons ~@body result#))))
+      `(loop [values# ~(second bindings)
+              ~(first bindings) (first ~(second bindings))
+              result# '()]
+        (if (empty? values#)
+          result#
+          (recur (rest values#)
+                 (second values#)
+                 (concat result# 
+                         (my-for ~(subvec bindings 2) ~@body))))))))
