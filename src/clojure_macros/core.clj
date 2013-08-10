@@ -92,16 +92,17 @@
         `(loop [values# ~(second bindings)
                 ~(first bindings) (first ~(second bindings))
                 result# '()]
-           (if (empty? values#)
-             (reverse result#)
-             (recur (rest values#) 
-                    (second values#) 
-                    (cons ~@body result#))))
+          (if (empty? values#)
+            (reverse result#)
+            (recur (rest values#)
+                   (second values#)
+                   (cons ~@body result#))))
         `(loop [values# ~(second bindings)
                 ~(first bindings) (first ~(second bindings))
-               result# '()]
+                result# '()]
           (if (empty? values#)
-           result#
-           (recur (rest values#)
-                  (second values#)
-                  (concat result# (my-for ~(subvec bindings 2) ~@body)))))))))
+            result#
+            (recur (rest values#)
+                   (second values#)
+                   (concat result# 
+                           (my-for ~(subvec bindings 2) ~@body)))))))))
