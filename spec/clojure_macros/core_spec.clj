@@ -428,3 +428,48 @@
                      ))
       (should= 0 @a)))
 )
+
+(describe "for"
+  (it "should return '() for '([[][]] nil)"
+    (should= '() (my-for [[][]] nil)))
+
+  (it "should return '(1 2 3) for '([x [1 2 3]] x)"
+    (should= '(1 2 3) (my-for [x [1 2 3]] x)))
+
+  (it "should return '(0 1 4 9 16) for '([x (take 5 (range))] (* x x))"
+    (should= '(0 1 4 9 16) (my-for [x (take 5 (range))] (* x x))))
+
+  (it "should return '([1 2]) for '([x [1] y [2]] [x y])"
+    (should= '([1 2]) (my-for [x [1] y [2]] [x y])))
+
+  (it "should return '([1 1] [1 2] [2 1] [2 2]) for '([x [1 2] y [1 2]] [x y])"
+    (should= '([1 1] [1 2] [2 1] [2 2]) (my-for [x [1 2] y [1 2]] [x y])))
+
+  (it "should be '([1 nil]) for '([[x y] ['(1)]])"
+    (should= '([1 nil]) (my-for [[x y] ['(1)]] [x y])))
+
+  (it "should ignore extra values in right half of binding"
+    (should= '([0 1] [3 4] [6 7]) 
+             (my-for [[x y] (partition 3 (take 9 (range)))] [x y])))
+
+  (it "should use nil for extra values in left half of binding"
+    (should= '([0 1 nil] [2 3 nil] [4 5 nil]) 
+             (my-for [[x y z] (partition 2 (take 6 (range)))] [x y z])))
+
+  (it "should be correct for complicated case"
+    (should=
+      (for [[x y] (repeat 5 '(1 2 3)) z '(1 2 3 4) a '(1 2 nil)]
+          [x y (+ x y) (* z z) 0 a])
+      (my-for [[x y] (repeat 5 '(1 2 3)) z '(1 2 3 4) a '(1 2 nil)]
+          [x y (+ x y) (* z z) 0 a])))
+
+  (it "should throw IllegalArgumentException if bindings is not a vector"
+    (should= :a (try 
+                  (macroexpand-1 '(my-for '(a [1]) [a]))
+                  (catch IllegalArgumentException e :a))))
+
+  (it "should throw IllegalArgumentException if odd number of forms in binding"
+    (should= :a (try
+                 (macroexpand-1 '(my-for [x [1 2] y] [x y]))
+                 (catch IllegalArgumentException e :a))))
+)
